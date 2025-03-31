@@ -4,7 +4,7 @@
     "cpus": 4
   },
   "waitFor": "onCreateCommand",
-  "updateContentCommand": "python3 -m pip install -r requirements.txt && sudo apt-get -q -y update && sudo apt-get -q -y install graphviz",
+  "updateContentCommand": "python3 -m pip install -r requirements.txt",
   "postCreateCommand": "",
   "postAttachCommand": {},
   "portsAttributes": {
@@ -52,6 +52,7 @@
         "ms-toolsai.jupyter-renderers",
         "ms-toolsai.vscode-jupyter-slideshow",
         "ms-toolsai.datawrangler",
+        "bierner.markdown-mermaid",
         "ms-python.vscode-python-envs"
       ]
     }
