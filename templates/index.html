@@ -8,32 +8,77 @@
   </head>
   <body>
     <div class="container">
-      <h1>Predict Win Rate</h1>
+      <h1>Predict Win Chance</h1>
       <form method="POST" action="/predict">
-        <label for="deaths">Deaths:</label>
+        <label for="deaths">Current deaths this match:</label>
         <input
           type="number"
-          step="0.01"
           id="deaths"
           name="deaths"
+          value="{{ request.form.deaths if request.form.deaths else '' }}"
+          placeholder="average: 2"
           required
         /><br />
 
-        <label for="kpg">Kills Per Game (KPG):</label>
-        <input type="number" step="0.01" id="kpg" name="kpg" required /><br />
+        <label for="kpg">Current Kills this match:</label>
+        <input
+          type="number"
+          id="kpg"
+          name="kpg"
+          value="{{ request.form.kpg if request.form.kpg else '' }}"
+          placeholder="average: 3"
+          required
+        /><br />
 
-        <label for="br">Battle Rating (BR):</label>
-        <input type="number" step="0.01" id="br" name="br" required /><br />
+        <label for="br">Battle Rating (lowest in your match):</label>
+        <select id="br" name="br" class="dropdown" required>
+          {% for value in [1.0, 1.3, 1.7, 2.0, 2.3, 2.7, 3.0, 3.3, 3.7, 4.0, 4.3, 4.7, 5.0, 5.3, 5.7, 6.0, 6.3, 6.7, 7.0, 7.3, 7.7, 8.0, 8.3, 8.7, 9.0, 9.3, 9.7, 10.0, 10.3, 10.7, 11.0, 11.3, 11.7, 12.0] %}
+          <option value="{{ value }}" {% if request.form.br == value|string %}selected{% endif %}>
+            {{ value }}
+          </option>
+          {% endfor %}
+        </select><br />
 
         <label for="nation">Nation:</label>
-        <input type="text" id="nation" name="nation" required /><br />
+        <select id="nation" name="nation" class="dropdown" required>
+          {% for nation in ["USA", "USSR", "Germany", "Britain", "Japan", "China", "Italy", "France", "Sweden", "Israel"] %}
+          <option value="{{ nation }}" {% if request.form.nation == nation %}selected{% endif %}>
+            {{ nation }}
+          </option>
+          {% endfor %}
+        </select><br />
 
         <button type="submit">Predict</button>
       </form>
 
-      {% if prediction %}
-      <h2>Predicted Win Rate: {{ prediction }}%</h2>
-      {% endif %} {% if error %}
+{% if prediction %}
+<h2
+  style="
+    color: 
+      {% if prediction <= 25 %}black
+      {% elif prediction <= 45 %}red
+      {% elif prediction <= 55 %}#996600 /* Darker yellow for better contrast */
+      {% elif prediction <= 75 %}green
+      {% else %}blue
+      {% endif %};
+    background-color: 
+      {% if prediction <= 25 %}#f0f0f0
+      {% elif prediction <= 45 %}#ffe5e5
+      {% elif prediction <= 55 %}#fff2cc /* Light yellow background */
+      {% elif prediction <= 75 %}#e5ffe5
+      {% else %}#e5f0ff
+      {% endif %};
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+  "
+>
+  Predicted Win Chance: {{ prediction | round(2) }}%
+</h2>
+{% endif %}
+
+      {% if error %}
       <h2 style="color: red">Error: {{ error }}</h2>
       {% endif %}
     </div>
